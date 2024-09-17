@@ -1,0 +1,635 @@
+Use master 
+GO
+USE PrestacionSalasComputoITCH;
+
+-------Tablas Estudiante--------
+
+-- Tabla Estudiante
+CREATE TABLE Estudiante (
+    IDEstudiante INT PRIMARY KEY IDENTITY(1,1),
+    IDInformacionPersonal_EST INT,
+    IDInformacionAcademica_EST INT,
+    IDInformacionMedica_EST INT,
+    IDHistorialAcademico_EST INT
+);
+
+-- Tabla InformacionPersonalEstudiante
+CREATE TABLE InformacionPersonalEstudiante (
+    IDInformacionPersonal_EST INT PRIMARY KEY IDENTITY(1,1),
+    Nombres VARCHAR(50),
+    PrimerApellido VARCHAR(50),
+    SegundoApellido VARCHAR(50),
+    FechaNacimiento DATE,
+    CURP VARCHAR(18),
+    RFC VARCHAR(13),
+    Celular VARCHAR(10),
+    TelefonoCasa VARCHAR(10),
+    IDDireccion_EST INT
+);
+
+-- Tabla DireccionEstudiante
+CREATE TABLE DireccionEstudiante (
+    IDDireccion_EST INT PRIMARY KEY IDENTITY(1,1),
+    Calle VARCHAR(100),
+    Interseccion1 VARCHAR(100),
+    Interseccion2 VARCHAR(100),
+    NumExterior VARCHAR(10),
+    NumInterior VARCHAR(10),
+    ID_CP INT
+);
+
+-- Tabla CodigoPostal
+CREATE TABLE CodigoPostal (
+    ID_CP INT PRIMARY KEY IDENTITY(1,1),
+    Colonia VARCHAR(100),
+    Localidad VARCHAR(100),
+    Municipio VARCHAR(100),
+    Estado VARCHAR(100),
+    Pais VARCHAR(100)
+);
+
+
+-- Tabla InformacionAcademicaEstudiante
+CREATE TABLE InformacionAcademicaEstudiante (
+    IDInformacionAcademica_EST INT PRIMARY KEY IDENTITY(1,1),
+    IDEstudiante INT,
+    CorreoInstitucional VARCHAR(50),
+    IDCarrera INT,
+    PromedioGeneral DECIMAL(5, 2),
+    IDCreditosComplementarios INT
+);
+
+-- Tabla Carrera
+CREATE TABLE Carrera (
+    IDCarrera INT PRIMARY KEY IDENTITY(1,1),
+    NombreCarrera VARCHAR(100),
+    DescripcionCarrera VARCHAR(255)
+); --En esta tabla se van a agregar todas las carreras del ITCH.
+
+-- Tabla CreditosComplementarios
+CREATE TABLE CreditosComplementarios (
+    IDCreditosComplementarios INT PRIMARY KEY IDENTITY(1,1),
+    IDTipo INT,
+    Total DECIMAL(3, 2)
+); --En esta tabla es para saber el total de creditos complementarios que lleva el alumno.
+
+-- Tabla TipoCredito
+CREATE TABLE TipoCredito (
+    IDTipo INT PRIMARY KEY IDENTITY(1,1),
+    DescripcionCredito VARCHAR(100)
+);--Tabla consecuenta de Creditos Complementarios, para saber que tipo de creditos posee el alumno.
+
+-- Tabla HistorialAcademicoEstudiante
+CREATE TABLE HistorialAcademicoEstudiante (
+    IDHistorialAcademico_EST INT PRIMARY KEY IDENTITY(1,1),
+    IDEstudiante INT,
+    IDAsignatura INT,
+    TotalPromedio DECIMAL(5, 2),
+    Semestre INT,
+    IDStatusAsignatura INT,
+    IDCreditosComplementarios INT
+);
+
+-- Tabla StatusAsignatura
+CREATE TABLE StatusAsignatura (
+    IDStatusAsignatura INT PRIMARY KEY IDENTITY(1,1),
+    Estado VARCHAR(50)
+);
+
+-- Tabla Asignaturas
+CREATE TABLE Asignaturas (
+    IDAsignatura INT PRIMARY KEY IDENTITY(1,1),
+    NombreAsignatura VARCHAR(100),
+    DescripcionAsignatura VARCHAR(255),
+    HorasTotales INT,
+    Creditos DECIMAL(3, 1)
+);
+
+-- Tabla InformacionMedicaEstudiante
+CREATE TABLE InformacionMedicaEstudiante (
+    IDInformacionMedica_EST INT PRIMARY KEY IDENTITY(1,1),
+    IDEstudiante INT,
+    IDAlergias INT,
+    IDEnfermedadesCronicas INT,
+    IDTipoSangre INT
+);
+------------------------------
+
+-----Tablas Medicas-----------
+
+-- Tabla Alergias
+CREATE TABLE Alergias (
+    IDAlergias INT PRIMARY KEY IDENTITY(1,1),
+    NombreAlergia VARCHAR(100),
+    DescripcionAlergia VARCHAR(255)
+);
+
+-- Tabla EnfermedadesCronicas
+CREATE TABLE EnfermedadesCronicas (
+    IDEnfermedadesCronicas INT PRIMARY KEY IDENTITY(1,1),
+    NombreEnfermedad VARCHAR(100),
+    DescripcionEnfermedad VARCHAR(255)
+);
+
+-- Tabla TipoSangre
+CREATE TABLE TipoSangre (
+    IDTipoSangre INT PRIMARY KEY IDENTITY(1,1),
+    NombreTipoSangre VARCHAR(50)
+); --En esta tabla se agregan los tipos de sangre para seleccionar
+
+-----------------------------------
+
+--------------------------------
+
+-----Tablas referentes al Prestamo de SALAS----------
+-- Tabla PrestamoSalas
+CREATE TABLE PrestamoSalas (
+    IDPrestamo INT PRIMARY KEY IDENTITY(1,1),
+    IDSala INT,
+    IDDocente INT,
+    FechaPrestamo DATE,
+    HoraInicio TIME,
+    HoraFin TIME,
+    Observaciones VARCHAR(100)
+);
+
+-- Tabla Asistencia
+CREATE TABLE Asistencia (
+    IDAsistencia INT PRIMARY KEY IDENTITY(1,1),
+    IDPrestamo INT,
+    IDEstudiante INT,
+    Asistio BIT,
+    Observaciones VARCHAR(100)
+);
+
+CREATE TABLE Sala (
+    IDSala INT PRIMARY KEY IDENTITY(1,1),
+    NombreSala VARCHAR(100),
+    DescripcionSala TEXT,
+    Capacidad INT,
+    IDDepartamentoAcademico INT, -- FK a DepartamentoAcademico
+    FOREIGN KEY (IDDepartamentoAcademico) REFERENCES DepartamentoAcademico(IDDepartamentoAcademico)
+);
+
+CREATE TABLE EstadoSala (
+    IDEstado INT PRIMARY KEY IDENTITY(1,1),
+    Descripcion VARCHAR(100)
+);
+
+CREATE TABLE EquipoSala (
+    IDEquipo INT PRIMARY KEY IDENTITY(1,1),
+    IDSala INT FOREIGN KEY REFERENCES Sala(IDSala),
+    CodigoSeriePC INT FOREIGN KEY REFERENCES EquipoPC(CodigoSeriePC),
+    CodigoSerieMonitor INT FOREIGN KEY REFERENCES Monitor(CodigoSerieMonitor),
+    CodigoSerieTeclado INT FOREIGN KEY REFERENCES Teclado(CodigoSerieTeclado),
+    CodigoSerieMouse INT FOREIGN KEY REFERENCES Mouse(CodigoSerieMouse),
+    CodigoSerieRegulador INT FOREIGN KEY REFERENCES Regulador(CodigoSerieRegulador)
+);
+
+
+------------------------
+
+-------------------------
+
+-----Tablas de Dispositivos, Equipos, etc ----------------
+
+CREATE TABLE EquipoPC (
+    CodigoSeriePC INT PRIMARY KEY,
+    IDProcesador INT FOREIGN KEY REFERENCES Procesador(IDProcesador),
+    IDTarjetaMadre INT FOREIGN KEY REFERENCES TarjetaMadre(IDTarjetaMadre),
+    IDMemoriaRAM INT FOREIGN KEY REFERENCES MemoriaRAM(IDMemoriaRAM),
+    IDMemoriaSalida INT FOREIGN KEY REFERENCES MemoriaSalida(IDMemoriaSalida),
+    IDTarjetaVideo INT FOREIGN KEY REFERENCES TarjetaVideo(IDTarjetaVideo),
+    IDFuentePoder INT, 
+    IDGabinete INT 
+);
+
+
+-- Tabla de MemoriaSalida
+CREATE TABLE MemoriaSalida (
+    IDMemoriaSalida INT PRIMARY KEY IDENTITY(1,1),
+    IDMarca INT,
+    Velocidad VARCHAR(50),
+    Almacenamiento VARCHAR(50),
+    FOREIGN KEY (IDMarca) REFERENCES Marcas(IDMarca)
+);
+
+-- Tabla de Procesador
+CREATE TABLE Procesador (
+    IDProcesador INT PRIMARY KEY IDENTITY(1,1),
+    IDMarca INT,
+    NombreProcesador VARCHAR(100),
+    Generacion VARCHAR(50),
+    Modelo VARCHAR(50),
+    Velocidad VARCHAR(50),
+    FOREIGN KEY (IDMarca) REFERENCES Marcas(IDMarca)
+);
+
+-- Tabla de TarjetaMadre
+CREATE TABLE TarjetaMadre (
+    IDTarjetaMadre INT PRIMARY KEY IDENTITY(1,1),
+    IDMarca INT,
+    NombreTarjetaMadre VARCHAR(100),
+    Modelo VARCHAR(50),
+    FOREIGN KEY (IDMarca) REFERENCES Marcas(IDMarca)
+);
+
+-- Tabla de Gabinete
+CREATE TABLE Gabinete (
+    IDGabinete INT PRIMARY KEY IDENTITY(1,1),
+    IDMarca INT,
+    NombreGabinete VARCHAR(100),
+    Dimensiones VARCHAR(50),
+    Color VARCHAR(50),
+    Caracteristicas TEXT,
+    FOREIGN KEY (IDMarca) REFERENCES Marcas(IDMarca)
+);
+
+-- Tabla de FuentePoder
+CREATE TABLE FuentePoder (
+    IDFuentePoder INT PRIMARY KEY IDENTITY(1,1),
+    IDMarca INT,
+    NombreFuentePoder VARCHAR(100),
+    Potencia VARCHAR(50),
+    Caracteristicas TEXT,
+    FOREIGN KEY (IDMarca) REFERENCES Marcas(IDMarca)
+);
+
+-- Tabla de Garantias
+CREATE TABLE Garantias (
+    IDGarantia INT PRIMARY KEY IDENTITY(1,1),
+    TiempoDuracion VARCHAR(50),
+    TipoGarantia VARCHAR(100)
+);
+
+CREATE TABLE TarjetaVideo (
+    IDTarjetaVideo INT PRIMARY KEY IDENTITY(1,1),
+    IDMarca INT FOREIGN KEY REFERENCES Marcas(IDMarca),
+    NombreTarjetaVideo VARCHAR(100),
+    Generacion VARCHAR(50),
+    Modelo VARCHAR(50),
+    MemoriaAlmacenamiento VARCHAR(50),
+    IDGarantia INT FOREIGN KEY REFERENCES Garantias(IDGarantia)
+);
+
+CREATE TABLE Regulador (
+    CodigoSerieRegulador INT PRIMARY KEY,
+    IDMarca INT FOREIGN KEY REFERENCES Marcas(IDMarca),
+    NombreRegulador VARCHAR(100),
+    Dimensiones VARCHAR(50),
+    Voltaje VARCHAR(50),
+    Caracteristicas VARCHAR(255),
+    IDGarantia INT FOREIGN KEY REFERENCES Garantias(IDGarantia)
+);
+
+CREATE TABLE Monitor (
+    CodigoSerieMonitor INT PRIMARY KEY,
+    IDMarca INT FOREIGN KEY REFERENCES Marcas(IDMarca),
+    NombreMonitor VARCHAR(100),
+    Dimensiones VARCHAR(50),
+    Color VARCHAR(50),
+    Fotogramas INT,
+    Caracteristicas VARCHAR(255),
+    Material VARCHAR(50),
+    IDGarantia INT FOREIGN KEY REFERENCES Garantias(IDGarantia)
+);
+
+CREATE TABLE Teclado (
+    CodigoSerieTeclado INT PRIMARY KEY,
+    IDMarca INT FOREIGN KEY REFERENCES Marcas(IDMarca),
+    NombreTeclado VARCHAR(100),
+    Dimensiones VARCHAR(50),
+    Color VARCHAR(50),
+    Caracteristicas VARCHAR(255),
+    Material VARCHAR(50),
+    IDGarantia INT FOREIGN KEY REFERENCES Garantias(IDGarantia)
+);
+
+CREATE TABLE Mouse (
+    CodigoSerieMouse INT PRIMARY KEY,
+    IDMarca INT FOREIGN KEY REFERENCES Marcas(IDMarca),
+    NombreMouse VARCHAR(100),
+    Dimensiones VARCHAR(50),
+    Color VARCHAR(50),
+    Caracteristicas VARCHAR(255),
+    Material VARCHAR(50),
+    IDGarantia INT FOREIGN KEY REFERENCES Garantias(IDGarantia)
+);
+
+CREATE TABLE MemoriaRAM (
+    IDMemoriaRAM INT PRIMARY KEY IDENTITY(1,1),
+    IDMarca INT FOREIGN KEY REFERENCES Marcas(IDMarca),
+    Velocidad VARCHAR(50),
+    Almacenamiento VARCHAR(50)
+);
+
+CREATE TABLE InformacionSoftware (
+    NumeroSerieSoftware INT PRIMARY KEY,
+    NombreSoftware VARCHAR(100),
+    Version VARCHAR(50),
+    EstadoLicencia VARCHAR(50),
+    FechaAdquisicion DATE,
+    FechaExpiracion DATE
+);
+
+
+-- Tabla de Marcas
+CREATE TABLE Marcas (
+    IDMarca INT PRIMARY KEY IDENTITY(1,1),
+    NombreMarca VARCHAR(100)
+);
+---------------------------------
+----------Mobiliario-------------
+
+CREATE TABLE MobiliarioSala (
+    IDMobiliario INT PRIMARY KEY IDENTITY(1,1),
+    IDTipoMobiliario INT FOREIGN KEY REFERENCES MobiliarioEspecifico(IDTipoMobiliario),
+    Cantidad INT,
+    IDSala INT FOREIGN KEY REFERENCES Sala(IDSala)
+);
+
+CREATE TABLE MobiliarioEspecifico (
+    IDTipoMobiliario INT PRIMARY KEY IDENTITY(1,1),
+    NombreMobiliario VARCHAR(100),
+    Descripcion VARCHAR(255),
+    Marca VARCHAR(50),
+    NoSerie VARCHAR(50),
+    Estado VARCHAR(50)
+);
+
+---------------------------------
+----------Tablas Mantenimiento---
+
+CREATE TABLE Mantenimiento (
+    IDMantenimiento INT PRIMARY KEY IDENTITY(1,1),
+    TipoMantenimiento VARCHAR(50),
+    IDMantenimientoSoftware INT FOREIGN KEY REFERENCES MantenimientoSoftware(IDMantenimientoSoftware),
+    IDMantenimientoHardware INT FOREIGN KEY REFERENCES MantenimientoHardware(IDMantenimientoHardware),
+    IDMantenimientoMobiliario INT FOREIGN KEY REFERENCES MantenimientoMobiliario(IDMantenimientoMobiliario),
+    IDMantenimientoSala INT FOREIGN KEY REFERENCES MantenimientoSala(IDMantenimientoSala)
+);
+
+
+CREATE TABLE MantenimientoSoftware (
+    IDMantenimientoSoftware INT PRIMARY KEY IDENTITY(1,1),
+    FechaMantenimiento DATE,
+    DescripcionMantenimiento VARCHAR(255),
+    NumeroSerieSoftware INT FOREIGN KEY REFERENCES InformacionSoftware(NumeroSerieSoftware),
+    IDEncargado INT FOREIGN KEY REFERENCES Encargado(IDEncargadoLab)
+);
+
+CREATE TABLE MantenimientoHardware (
+    IDMantenimientoHardware INT PRIMARY KEY IDENTITY(1,1),
+    FechaMantenimiento DATE,
+    DescripcionMantenimiento VARCHAR(255),
+    IDEquipo INT FOREIGN KEY REFERENCES EquipoSala(IDEquipo),
+    IDEncargado INT FOREIGN KEY REFERENCES Encargado(IDEncargadoLab)
+);
+
+CREATE TABLE MantenimientoMobiliario (
+    IDMantenimientoMobiliario INT PRIMARY KEY IDENTITY(1,1),
+    FechaMantenimiento DATE,
+    DescripcionMantenimiento VARCHAR(255),
+    IDMobiliario INT FOREIGN KEY REFERENCES MobiliarioSala(IDMobiliario),
+    IDEncargado INT FOREIGN KEY REFERENCES Encargado(IDEncargadoLab)
+);
+
+CREATE TABLE MantenimientoSala (
+    IDMantenimientoSala INT PRIMARY KEY IDENTITY(1,1),
+    FechaMantenimiento DATE,
+    DescripcionMantenimiento VARCHAR(255),
+    IDSala INT FOREIGN KEY REFERENCES Sala(IDSala),
+    IDEncargado INT FOREIGN KEY REFERENCES Encargado(IDEncargadoLab)
+);
+
+
+
+---------------------------------
+
+------Tablas de Docente ----------
+
+-- Tabla de DepartamentoAcademico
+CREATE TABLE DepartamentoAcademico (
+    IDDepartamentoAcademico INT PRIMARY KEY IDENTITY(1,1),
+    NombreDepartamento VARCHAR(100),
+    DescripcionDepartamento TEXT
+);
+
+CREATE TABLE Docente (
+    IDDocente INT PRIMARY KEY IDENTITY(1,1),
+    IDInformacionPersonal_DOC INT,
+    IDInformacionAcademica_DOC INT,
+    IDInformacionMedica_DOC INT,
+);
+
+CREATE TABLE InformacionPersonalDocente (
+    IDInformacionPersonal_DOC INT PRIMARY KEY IDENTITY(1,1),
+    IDDocente INT FOREIGN KEY REFERENCES Docente(IDDocente),
+    Nombres VARCHAR(50),
+    PrimerApellido VARCHAR(50),
+    SegundoApellido VARCHAR(50),
+    FechaNacimiento DATE,
+    CURP VARCHAR(18),
+    RFC VARCHAR(13),
+    Celular VARCHAR(20),
+    TelefonoCasa VARCHAR(20),
+    IDDireccion_DOC INT FOREIGN KEY REFERENCES DireccionDocente(IDDireccion_DOC)
+);
+
+
+CREATE TABLE InformacionAcademicaDocente (
+    IDInformacionAcademica_DOC INT PRIMARY KEY IDENTITY(1,1),
+    IDDocente INT FOREIGN KEY REFERENCES Docente(IDDocente),
+    CorreoInstitucional VARCHAR(50),
+    IDGrado INT FOREIGN KEY REFERENCES GradoAcademico(IDGrado),
+    IDDepartamentoAcademico INT FOREIGN KEY REFERENCES DepartamentoAcademico(IDDepartamentoAcademico)
+);
+
+CREATE TABLE GradoAcademico (
+    IDGrado INT PRIMARY KEY IDENTITY(1,1),
+    Nivel VARCHAR(50),  -- Ej: Licenciatura, Maestría, Doctorado
+    Universidad VARCHAR(100),
+    Cedula VARCHAR(50)
+);
+
+-- Tabla de DireccionDocente
+CREATE TABLE DireccionDocente (
+    IDDireccion_DOC INT PRIMARY KEY IDENTITY(1,1),
+    Calle VARCHAR(100),
+    Interseccion1 VARCHAR(100),
+    Interseccion2 VARCHAR(100),
+    NumExterior VARCHAR(10),
+    NumInterior VARCHAR(10),
+    ID_CP INT, -- FK a CodigoPostal
+    FOREIGN KEY (ID_CP) REFERENCES CodigoPostal(ID_CP)
+);
+
+CREATE TABLE InformacionMedicaDocente (
+    IDInformacionMedica_DOC INT PRIMARY KEY IDENTITY(1,1),
+    IDDocente INT FOREIGN KEY REFERENCES Docente(IDDocente),
+    IDAlergias INT,
+    IDEnfermedadesCronicas INT,
+    IDTipoSangre INT
+);
+
+--------------------------------------
+--------Tablas Coordinador------------
+
+-- Tabla de DireccionCoordinador
+CREATE TABLE DireccionCoordinador (
+    IDDireccion_COR INT PRIMARY KEY IDENTITY(1,1),
+    Calle VARCHAR(100),
+    Interseccion1 VARCHAR(100),
+    Interseccion2 VARCHAR(100),
+    NumExterior VARCHAR(10),
+    NumInterior VARCHAR(10),
+    ID_CP INT, -- FK a CodigoPostal
+    FOREIGN KEY (ID_CP) REFERENCES CodigoPostal(ID_CP)
+);
+
+--------------------------------------
+--------Tablas Personal------------
+
+-- Tabla de DireccionPersonal
+CREATE TABLE DireccionPersonal (
+    IDDireccion_PER INT PRIMARY KEY IDENTITY(1,1),
+    Calle VARCHAR(100),
+    Interseccion1 VARCHAR(100),
+    Interseccion2 VARCHAR(100),
+    NumExterior VARCHAR(10),
+    NumInterior VARCHAR(10),
+    ID_CP INT, -- FK a CodigoPostal
+    FOREIGN KEY (ID_CP) REFERENCES CodigoPostal(ID_CP)
+);
+
+--------------------------------------
+--------Tablas Encargado------------
+
+-- Tabla de DireccionEncargado
+CREATE TABLE DireccionEncargado (
+    IDDireccion_ENC INT PRIMARY KEY IDENTITY(1,1),
+    Calle VARCHAR(100),
+    Interseccion1 VARCHAR(100),
+    Interseccion2 VARCHAR(100),
+    NumExterior VARCHAR(10),
+    NumInterior VARCHAR(10),
+    ID_CP INT, -- FK a CodigoPostal
+    FOREIGN KEY (ID_CP) REFERENCES CodigoPostal(ID_CP)
+);
+
+CREATE TABLE Encargado (
+    IDEncargadoLab INT PRIMARY KEY IDENTITY(1,1),
+    IDInformacionPersonal_ENC INT,
+    IDInformacionAcademica_ENC INT,
+    IDInformacionMedica_ENC INT,
+);
+-- Tabla de InformacionPersonalEncargado
+CREATE TABLE InformacionPersonalEncargado (
+    IDInformacionPersonal_ENC INT PRIMARY KEY IDENTITY(1,1),
+    IDEncargadoLab INT,
+    Nombres VARCHAR(50),
+    PrimerApellido VARCHAR(50),
+    SegundoApellido VARCHAR(50),
+    FechaNacimiento DATE,
+    CURP VARCHAR(18),
+    RFC VARCHAR(13),
+    Celular VARCHAR(15),
+    TelefonoCasa VARCHAR(15),
+    IDDireccion_ENC INT,
+    FOREIGN KEY (IDEncargadoLab) REFERENCES Encargado(IDEncargadoLab),
+    FOREIGN KEY (IDDireccion_ENC) REFERENCES DireccionEncargado(IDDireccion_ENC)
+);
+
+-- Tabla de InformacionAcademicaEncargadoLab
+CREATE TABLE InformacionAcademicaEncargadoLab (
+    IDInformacionAcademica_ENC INT PRIMARY KEY IDENTITY(1,1),
+    IDEncargadoLab INT,
+    CorreoInstitucional VARCHAR(50),
+    IDGrado INT,
+    IDDepartamentoAcademico INT,
+    FOREIGN KEY (IDEncargadoLab) REFERENCES Encargado(IDEncargadoLab),
+    FOREIGN KEY (IDGrado) REFERENCES GradoAcademico(IDGrado),
+    FOREIGN KEY (IDDepartamentoAcademico) REFERENCES DepartamentoAcademico(IDDepartamentoAcademico)
+);
+
+-- Tabla de InformacionMedicaEncargadoLab
+CREATE TABLE InformacionMedicaEncargadoLab (
+    IDInformacionMedica_ENC INT PRIMARY KEY IDENTITY(1,1),
+    IDEncargadoLab INT,
+    IDAlergias INT,
+    IDEnfermedadesCronicas INT,
+    IDTipoSangre INT,
+    FOREIGN KEY (IDEncargadoLab) REFERENCES Encargado(IDEncargadoLab),
+    FOREIGN KEY (IDAlergias) REFERENCES Alergias(IDAlergias),
+    FOREIGN KEY (IDEnfermedadesCronicas) REFERENCES EnfermedadesCronicas(IDEnfermedadesCronicas),
+    FOREIGN KEY (IDTipoSangre) REFERENCES TipoSangre(IDTipoSangre)
+);
+
+--------------------------------------
+--------Tablas Jefe Departamento------------
+
+-- Tabla de DireccionJefeDepartamento
+CREATE TABLE DireccionJefeDepartamento (
+    IDDireccion_JEF INT PRIMARY KEY IDENTITY(1,1),
+    Calle VARCHAR(100),
+    Interseccion1 VARCHAR(100),
+    Interseccion2 VARCHAR(100),
+    NumExterior VARCHAR(10),
+    NumInterior VARCHAR(10),
+    ID_CP INT, -- FK a CodigoPostal
+    FOREIGN KEY (ID_CP) REFERENCES CodigoPostal(ID_CP)
+);
+
+CREATE TABLE JefeDepartamentoLab (
+    IDJefeDepartamento INT PRIMARY KEY IDENTITY(1,1),
+    IDInformacionPersonal_JEF INT,
+    IDInformacionAcademica_JEF INT,
+    IDInformacionMedica_JEF INT,
+);
+
+-- Tabla de InformacionPersonalJefeDepartamento
+CREATE TABLE InformacionPersonalJefeDepartamento (
+    IDInformacionPersonal_JEF INT PRIMARY KEY IDENTITY(1,1),
+    IDJefeDepartamento INT,
+    Nombres VARCHAR(50),
+    PrimerApellido VARCHAR(50),
+    SegundoApellido VARCHAR(50),
+    FechaNacimiento DATE,
+    CURP VARCHAR(18),
+    RFC VARCHAR(13),
+    Celular VARCHAR(15),
+    TelefonoCasa VARCHAR(15),
+    IDDireccion_JEF INT,
+    FOREIGN KEY (IDJefeDepartamento) REFERENCES JefeDepartamentoLab(IDJefeDepartamento),
+    FOREIGN KEY (IDDireccion_JEF) REFERENCES DireccionJefeDepartamento(IDDireccion_JEF)
+);
+
+-- Tabla de InformacionAcademicaJefeDepartamento
+CREATE TABLE InformacionAcademicaJefeDepartamento (
+    IDInformacionAcademica_JEF INT PRIMARY KEY IDENTITY(1,1),
+    IDJefeDepartamento INT,
+    CorreoInstitucional VARCHAR(50),
+    IDGrado INT,
+    IDDepartamentoAcademico INT,
+    FOREIGN KEY (IDJefeDepartamento) REFERENCES JefeDepartamentoLab(IDJefeDepartamento),
+    FOREIGN KEY (IDGrado) REFERENCES GradoAcademico(IDGrado),
+    FOREIGN KEY (IDDepartamentoAcademico) REFERENCES DepartamentoAcademico(IDDepartamentoAcademico)
+);
+
+-- Tabla de InformacionMedicaJefeDepartamento
+CREATE TABLE InformacionMedicaJefeDepartamento (
+    IDInformacionMedica_JEF INT PRIMARY KEY IDENTITY(1,1),
+    IDJefeDepartamento INT,
+    IDAlergias INT,
+    IDEnfermedadesCronicas INT,
+    IDTipoSangre INT,
+    FOREIGN KEY (IDJefeDepartamento) REFERENCES JefeDepartamentoLab(IDJefeDepartamento),
+    FOREIGN KEY (IDAlergias) REFERENCES Alergias(IDAlergias),
+    FOREIGN KEY (IDEnfermedadesCronicas) REFERENCES EnfermedadesCronicas(IDEnfermedadesCronicas),
+    FOREIGN KEY (IDTipoSangre) REFERENCES TipoSangre(IDTipoSangre)
+);
+
+--------------------------------
+
+
+
